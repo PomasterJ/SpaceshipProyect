@@ -2,6 +2,7 @@ package com.spacemedia.spaceship.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -20,10 +21,21 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/spaceships/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/spaceships/**").hasAnyRole("ADMIN","USER")
+                        .requestMatchers(HttpMethod.PUT,"/spaceships/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/spaceships/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/spaceships/**").hasRole("ADMIN")
+                        .requestMatchers("/swagger-ui/**").hasAnyRole("ADMIN","USER")
+                        .requestMatchers("/h2-console/**").hasAnyRole("ADMIN","USER")
+
                         .anyRequest().authenticated()
                 )
                 .httpBasic(withDefaults());
+
+        httpSecurity.csrf((csrf) -> csrf.ignoringRequestMatchers("/spaceships/**")
+                .ignoringRequestMatchers("/swagger-ui/**")
+                .ignoringRequestMatchers("/h2-console/**"));
+
         return httpSecurity.build();
     }
 

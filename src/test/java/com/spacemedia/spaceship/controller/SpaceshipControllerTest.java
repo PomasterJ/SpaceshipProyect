@@ -2,6 +2,7 @@ package com.spacemedia.spaceship.controller;
 
 import com.spacemedia.spaceship.entity.Spaceship;
 import com.spacemedia.spaceship.repository.SpaceshipRepository;
+import lombok.With;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -43,6 +45,7 @@ class SpaceshipControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", password = "admin", roles = {"ADMIN"})
     void getAllSpaceships() throws Exception{
         mockMvc.perform(get("/spaceships?page=0&size=3")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -53,6 +56,7 @@ class SpaceshipControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", password = "admin", roles = {"ADMIN"})
     void getSpaceshipById() throws Exception{
         mockMvc.perform(get("/spaceships/{id}", 1L))
                 .andExpect(status().isOk())
@@ -60,6 +64,7 @@ class SpaceshipControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", password = "admin", roles = {"ADMIN"})
     void getSpaceshipByPartialName() throws Exception{
         String spaceshipName = "mil";
         mockMvc.perform(get("/spaceships/search?name="+spaceshipName)
@@ -69,6 +74,7 @@ class SpaceshipControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", password = "admin", roles = {"ADMIN"})
     void createSpaceship() throws Exception {
         String spaceshipJson = "{\"name\": \"Serenity\"}";
 
@@ -80,6 +86,7 @@ class SpaceshipControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", password = "admin", roles = {"ADMIN"})
     void editSpaceship() throws Exception {
         // Verificar que la nave tiene el nombre
         Assertions.assertTrue(spaceshipRepository.findByName("Millennium Falcon").getFirst().getName().equals("Millennium Falcon"));
@@ -95,6 +102,7 @@ class SpaceshipControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", password = "admin", roles = {"ADMIN"})
     void deleteSpaceship() throws Exception {
         //creamos una nueva nave
         Spaceship spaceship = new Spaceship("Santisima trinidad");
